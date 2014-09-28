@@ -33,7 +33,7 @@ STI_UINT64 is obviously 8 bytes.
 We've established that the encoding is similar to JSON, in that it encodes
 arbitary structures. It's just that the keys are all predefined.
 
-Now, consider the type ordinal [enumeration](https://github.com/ripple/rippled/blob/1a7eafb6993f95c4d34e00669a70c8dd4ec0c9ba/src/ripple/module/data/protocol/SField.h#L27) of types:
+Now, consider the type ordinal [enumeration](https://github.com/ripple/rippled/blob/1a7eafb6993f95c4d34e00669a70c8dd4ec0c9ba/src/ripple/module/data/protocol/SField.h#L27):
 
 ```c++
 // // types (common)
@@ -67,11 +67,13 @@ SField const sfTransactionType = make::one(&sfTransactionType, STI_UINT16, 2, "T
 While being 16 bit integers, both fields actually have richer semantics. They
 are in fact both enums for various transaction types. 
 
-[TransactionType](https://github.com/ripple/rippled/blob/1a7eafb6993f95c4d34e00669a70c8dd4ec0c9ba/src/ripple/module/data/protocol/TxFormats.h#L31)
-[LedgerEntryType](https://github.com/ripple/rippled/blob/1a7eafb6993f95c4d34e00669a70c8dd4ec0c9ba/src/ripple/module/data/protocol/LedgerFormats.h#L28-29)
+1. [TransactionType](https://github.com/ripple/rippled/blob/1a7eafb6993f95c4d34e00669a70c8dd4ec0c9ba/src/ripple/module/data/protocol/TxFormats.h#L31)
+2. [LedgerEntryType](https://github.com/ripple/rippled/blob/1a7eafb6993f95c4d34e00669a70c8dd4ec0c9ba/src/ripple/module/data/protocol/LedgerFormats.h#L28-29)
 
 The string symbolic representations for TransactionType are defined [here] (https://github.com/ripple/rippled/blob/1a7eafb6993f95c4d34e00669a70c8dd4ec0c9ba/src/ripple/module/data/protocol/TxFormats.cpp#L56) 
-and used [here](https://github.com/ripple/rippled/blob/1a7eafb6993f95c4d34e00669a70c8dd4ec0c9ba/src/ripple/module/data/protocol/STParsedJSON.cpp#L206)
+and used [here](https://github.com/ripple/rippled/blob/1a7eafb6993f95c4d34e00669a70c8dd4ec0c9ba/src/ripple/module/data/protocol/STParsedJSON.cpp#L206).
+
+Now look at some of the STI_UINT32 fields:
 
 ```
 // 32-bit integers (common)
@@ -81,10 +83,10 @@ SField const sfLedgerSequence    = make::one(&sfLedgerSequence,    STI_UINT32,  
 SField const sfExpiration        = make::one(&sfExpiration,        STI_UINT32, 10, "Expiration");
 ```
 
-LedgerSequence is just a standard number, mapping naturally to std::uint32_t in
+`LedgerSequence` is just a standard number, mapping naturally to std::uint32_t in
 C++ or a long in Java (which has no unsigned integer)
 
-`Flags` is a little more interesting, it packs in a bunch of per TransactionType
+`Flags` is a little more interesting; it packs in a bunch of per `TransactionType`
 boolean options into an erstwhile `32 unsigned int`. These options have [symbolic names](https://github.com/ripple/ripple
 d/blob/1a7eafb6993f95c4d34e00669a70c8dd4ec0c9ba/src/ripple/module/data/protocol/TxFlags.h#L70):
 
