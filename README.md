@@ -20,9 +20,9 @@ The objects are serialized as so:
     $field_bytes$serialized_type_bytes...
     
 This is roughly equivalent to:
-
+```json
     {"$key" : "$value"}
-
+```
 Thus in some senses it's much like json, as the structure is somewhat self
 describing. (In contrast to a way of encoding structures, where the $keys were
 implied by position in a tuple of values)
@@ -58,7 +58,7 @@ STI_VECTOR256 = 19,
 
 And consider some of the fields:
 
-```
+```c++
 // 16-bit integers
 SField const sfLedgerEntryType = make::one(&sfLedgerEntryType, STI_UINT16, 1, "LedgerEntryType", SField::sMD_Never);
 SField const sfTransactionType = make::one(&sfTransactionType, STI_UINT16, 2, "TransactionType");
@@ -75,7 +75,7 @@ and used [here](https://github.com/ripple/rippled/blob/1a7eafb6993f95c4d34e00669
 
 Now look at some of the STI_UINT32 fields:
 
-```
+```c++
 // 32-bit integers (common)
 SField const sfFlags             = make::one(&sfFlags,             STI_UINT32,  2, "Flags");
 SField const sfLedgerSequence    = make::one(&sfLedgerSequence,    STI_UINT32,  6, "LedgerSequence");
@@ -133,17 +133,18 @@ object classes (used to represent a transaction) are essentially wrappers around
 create arbitrary structures, except limited to predefined keys.
 
 Like most JSON apis, the typical api was tried:
-
+```java
     object.getAmount(Field.Amount)
-
+```
 However, what about type safety for put?:
-
+```java
     object.putAmount(Field.LedgerSequence, anAmount)
-
+```
 For this reason, typed fields were enumerated and placed as static members on classes:
-
+```java
     object.get(Amount.LimitAmount)
     object.put(UInt32.LedgerSequence, anAmount) <--- a compile time error
+```
 
 Built on top of these objects (STObject) is a hierarchy for transactions:
 
@@ -155,7 +156,7 @@ Built on top of these objects (STObject) is a hierarchy for transactions:
 The Transaction class has accessors for common transaction fields, and various
 methods:
 
-```
+```java
 public class Transaction extends STObject {
 ...
     public TransactionType transactionType() {
@@ -200,7 +201,7 @@ standard implementation, with nothing particularly nice about it.
 
 Exhibit le suckery: 
 
-```
+```java
 public void setCanonicalSignatureFlag() {
     UInt32 flags = get(UInt32.Flags);
     if (flags == null) {
