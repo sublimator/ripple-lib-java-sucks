@@ -132,28 +132,28 @@ object classes (used to represent a transaction) are essentially wrappers around
 `Map<Field, SerializedType>` So, again, this matches the json like ability to
 create arbitrary structures, except limited to predefined keys.
 
-Like any map, the typical api is as follows:
+Like most JSON apis, the typical api was tried:
 
     object.getAmount(Field.Amount)
 
-However, what about type safety for put:
+However, what about type safety for put?:
 
     object.putAmount(Field.LedgerSequence, anAmount)
 
-For this reason, typed fields were enumerated and placed as static members on classes
+For this reason, typed fields were enumerated and placed as static members on classes:
 
     object.get(Amount.LimitAmount)
     object.put(UInt32.LedgerSequence, anAmount) <--- a compile time error
 
 Built on top of these objects (STObject) is a hierarchy for transactions:
 
-    STObject 
+    STObject
         Transaction
             Payment
             OfferCreate
 
-The Transaction object has getters/setters() for common transaction fields, and
-various methods:
+The Transaction class has accessors for common transaction fields, and various
+methods:
 
 ```
 public class Transaction extends STObject {
@@ -209,5 +209,16 @@ public void setCanonicalSignatureFlag() {
         flags = flags.or(CANONICAL_SIGNATURE);
     }
     put(UInt32.Flags, flags);
+}
+```
+
+Perhaps better would be classes like this:
+
+```java
+class Payment extends Transaction {
+    public Amount paths;
+    public AccountID destination;
+    public Optional<PathSet> paths;
+    public Optional<SendMax> sendMax;
 }
 ```
