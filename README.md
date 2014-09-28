@@ -189,13 +189,13 @@ public class Transaction extends STObject {
 ```
 
 While this does lead to nice auto completion, and discoverability of fields, and
-is an improvement over using the raw STObject aip everywhere, might there not be
+is an improvement over using the raw STObject api everywhere, might there not be
 a nicer API using POJOS and reflection rather than building objects around a
 `Map<Field, SerializedType>` ?
 
 Other than the TransactionType accessors, which is one of the few SerializedType
 implementations that doesn't have a corresponding STI_TRANSACTION_TYPE, most of
-the types used are generic. Note that the flags() just returns a UInt32, the
+the types used are generic. Note that `flags()` just returns a `UInt32`, the
 standard implementation, with nothing particularly nice about it.
 
 Exhibit le suckery: 
