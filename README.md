@@ -21,7 +21,7 @@ The objects are serialized as so:
     
 This is roughly equivalent to:
 ```json
-    {"$key" : "$value"}
+    {"$key" : "$value", ...}
 ```
 Thus in some senses it's much like json, as the structure is somewhat self
 describing. (In contrast to a way of encoding structures, where the $keys were
@@ -222,4 +222,19 @@ class Payment extends Transaction {
     public Optional<PathSet> paths;
     public Optional<SendMax> sendMax;
 }
+```
+
+Currently, classes like Payment transitively depend on STObject for json/binary
+serialization but that's not necessarily the only way to do it.
+
+Perhaps much in the same way the Jackson API can do:
+
+```java
+    mapper.readValue(jsonNode, Payment.class)
+```
+
+We could build something that likewise used reflection:
+
+```java
+    mapper.readValue(rawSTObjectInstance, Payment.class)
 ```
