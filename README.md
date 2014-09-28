@@ -81,10 +81,10 @@ SField const sfLedgerSequence    = make::one(&sfLedgerSequence,    STI_UINT32,  
 SField const sfExpiration        = make::one(&sfExpiration,        STI_UINT32, 10, "Expiration");
 ```
 
-`LedgerSequence is just a standard number, mapping naturally to std::uint32_t in
+LedgerSequence is just a standard number, mapping naturally to std::uint32_t in
 C++ or a long in Java (which has no unsigned integer)
 
-`Flags is a little more interesting, it packs in a bunch of per TransactionType
+`Flags` is a little more interesting, it packs in a bunch of per TransactionType
 boolean options into an erstwhile `32 unsigned int`. These options have [symbolic names](https://github.com/ripple/ripple
 d/blob/1a7eafb6993f95c4d34e00669a70c8dd4ec0c9ba/src/ripple/module/data/protocol/TxFlags.h#L70):
 
@@ -156,6 +156,10 @@ various methods:
 ```
 public class Transaction extends STObject {
 ...
+    public TransactionType transactionType() {
+        return (TransactionType) get(Field.TransactionType);
+    }
+
     public UInt32 flags() {return get(UInt32.Flags);}
     public UInt32 sourceTag() {return get(UInt32.SourceTag);}
     public UInt32 sequence() {return get(UInt32.Sequence);}
@@ -167,7 +171,7 @@ public class Transaction extends STObject {
     public VariableLength signingPubKey() {return get(VariableLength.SigningPubKey);}
     public VariableLength txnSignature() {return get(VariableLength.TxnSignature);}
     public AccountID account() {return get(AccountID.Account);}
-    public void transactionType(UInt16 val) {put(Field.TransactionType, val);}
+    public void transactionType(TransactionType val) {put(Field.TransactionType, val);}
     public void flags(UInt32 val) {put(Field.Flags, val);}
     public void sourceTag(UInt32 val) {put(Field.SourceTag, val);}
     public void sequence(UInt32 val) {put(Field.Sequence, val);}
@@ -180,4 +184,28 @@ public class Transaction extends STObject {
     public void txnSignature(VariableLength val) {put(Field.TxnSignature, val);}
     public void account(AccountID val) {put(Field.Account, val);}
 ...
+```
+
+While this does lead to nice auto completion, and discoverability of fields, and
+is an improvement over using the raw STObject aip everywhere, might there not be
+a nicer API using POJOS and reflection rather than building objects around a
+`Map<Field, SerializedType>` ?
+
+Other than the TransactionType accessors, which is one of the few SerializedType
+implementations that doesn't have a corresponding STI_TRANSACTION_TYPE, most of
+the types used are generic. Note that the flags() just returns a UInt32, the
+standard implementation, with nothing particularly nice about it.
+
+Exhibit le suckery: 
+
+```
+public void setCanonicalSignatureFlag() {
+    UInt32 flags = get(UInt32.Flags);
+    if (flags == null) {
+        flags = CANONICAL_SIGNATURE;
+    } else {
+        flags = flags.or(CANONICAL_SIGNATURE);
+    }
+    put(UInt32.Flags, flags);
+}
 ```
