@@ -24,7 +24,7 @@ This is roughly equivalent to:
     {"$key" : "$value", ...}
 ```
 Thus in some senses it's much like json, as the structure is somewhat self
-describing. (In contrast to a way of encoding structures, where the $keys were
+describing. (In contrast to a way of encoding structures where the $keys were
 implied by position in a tuple of values)
 
 The type of the $value when serialized, implies the length, for example a
@@ -87,7 +87,7 @@ SField const sfExpiration        = make::one(&sfExpiration,        STI_UINT32, 1
 C++ or a long in Java (which has no unsigned integer)
 
 `Flags` is a little more interesting; it packs in a bunch of per `TransactionType`
-boolean options into an erstwhile `32 unsigned int`. These options have [symbolic names](https://github.com/ripple/ripple
+boolean options into an erstwhile `32 bit unsigned int`. These options have [symbolic names](https://github.com/ripple/ripple
 d/blob/1a7eafb6993f95c4d34e00669a70c8dd4ec0c9ba/src/ripple/module/data/protocol/TxFlags.h#L70):
 
 ```c++
@@ -217,7 +217,7 @@ Perhaps better would be classes like this:
 
 ```java
 class Payment extends Transaction {
-    public Amount paths;
+    public Amount amount;
     public AccountID destination;
     public Optional<PathSet> paths;
     public Optional<SendMax> sendMax;
